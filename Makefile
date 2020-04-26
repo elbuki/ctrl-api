@@ -1,5 +1,3 @@
-include .env
-
 # Prepares the local repository to have a hooks executing
 prepare:
 	git config core.hooksPath hooks/
