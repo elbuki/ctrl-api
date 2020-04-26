@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+    api:
+        build: .
+        container_name: api
+        env_file: .env
+        ports:
+            - "${PORT}:${PORT}"
+        volumes:
+            - .:/usr/src/app
+        working_dir: /usr/src/app
+
+    # Adding the linter as a dependency, not an actual service
+    linter:
+        command: "exit 0"
+        container_name: linter
+        entrypoint: "sh -c"
+        image: golangci/golangci-lint:v1.24.0-alpine
