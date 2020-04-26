@@ -10,4 +10,4 @@ RUN apk add --no-cache git \
 
 ENTRYPOINT CompileDaemon \
     --build="go build -o build/ ./src/..." \
-    --command="./build/src"
+    --command="./build/src -P"
