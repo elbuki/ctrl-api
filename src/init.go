@@ -1,98 +1,33 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"log"
-	"syscall"
 
-	"github.com/elbuki/ctrl-api/src/bcrypt"
-
-	"golang.org/x/crypto/ssh/terminal"
-)
-
-const (
-	DEFAULT_API_PORT    = "9516"
-	DEFAULT_HASH_COST   = 16
-	SET_PASSPHRASE_FLAG = "P"
+	"github.com/elbuki/ctrl-api/src/config"
 )
 
 var (
-	apiPort        string
-	usePassphrase  bool
-	hashCost       int
+	conf           config.Config
 	passphraseHash []byte
-	encrypt        bcrypt.Encryptor
 )
 
 func init() {
-	flag.StringVar(
-		&apiPort,
-		"port",
-		DEFAULT_API_PORT,
-		"rpc serving port",
-	)
+	conf.SetFlags()
 
-	flag.IntVar(
-		&hashCost,
-		"cost",
-		DEFAULT_HASH_COST,
-		"hash salt cost for the passphrase",
-	)
+	if err := conf.SetController(); err != nil {
+		log.Fatalf("could not set keys controller: %v", err)
+	}
 
-	flag.BoolVar(
-		&usePassphrase,
-		SET_PASSPHRASE_FLAG,
-		false,
-		"use a passphrase for client connections",
-	)
-
-	flag.Parse()
-
-	encrypt = bcrypt.Encryptor{}
-	encrypt.SetCost(hashCost)
-
-	if !usePassphrase {
+	if !conf.UsePassphrase {
 		return
 	}
 
-	pass, err := askPassphrase()
+	conf.SetEncryptor()
+
+	pHash, err := conf.GetPassphrase()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("could not get passphrase: %v", err)
 	}
 
-	passphraseHash, err = setPassphrase(pass)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func askPassphrase() ([]byte, error) {
-	var err error
-	var pass []byte
-
-	fmt.Printf("Enter a passphrase: ")
-	// Using terminal library for cross os compatibility
-	pass, err = terminal.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		return pass, fmt.Errorf("could not receive the passphrase: %v\n", err)
-	}
-
-	fmt.Print("\n")
-
-	return pass, nil
-}
-
-func setPassphrase(pass []byte) ([]byte, error) {
-	if len(pass) == 0 {
-		fmt.Println("Using default passphrase")
-		return nil, nil
-	}
-
-	passphraseHash, err := encrypt.Generate(pass)
-	if err != nil {
-		return pass, fmt.Errorf("could not encrypt passphrase: %v", err)
-	}
-
-	return passphraseHash, nil
+	passphraseHash = pHash
 }

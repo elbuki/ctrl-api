@@ -10,6 +10,15 @@ type Encryptor struct {
 	hashCost int
 }
 
+func (e Encryptor) Compare(hashed []byte, password string) error {
+	err := bcrypt.CompareHashAndPassword(hashed, []byte(password))
+	if err != nil {
+		return fmt.Errorf("could not compare hash with password: %v", err)
+	}
+
+	return nil
+}
+
 func (e Encryptor) Generate(password []byte) ([]byte, error) {
 	pass, err := bcrypt.GenerateFromPassword(password, e.hashCost)
 	if err != nil {

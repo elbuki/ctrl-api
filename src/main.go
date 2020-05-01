@@ -2,10 +2,30 @@ package main
 
 import (
 	"log"
+	"net"
+	"net/rpc"
+
+	"github.com/elbuki/ctrl-api/src/handler"
 )
 
 func main() {
-	log.Printf("port: %s\n", apiPort)
-	log.Printf("cost: %v\n", hashCost)
-	log.Printf("passphrase: %s\n", passphraseHash)
+	port := ":" + conf.APIPort
+	api := &handler.API{Conf: conf}
+
+	if err := rpc.Register(api); err != nil {
+		log.Fatalf("could not register router: %v", err)
+	}
+
+	listener, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("could not initialize server: %v", err)
+	}
+
+	defer listener.Close()
+
+	log.Printf("CTRL server started at port %s", port)
+
+	log.Println(passphraseHash)
+
+	rpc.Accept(listener)
 }

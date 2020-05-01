@@ -4,7 +4,7 @@ prepare:
 
 # Run the linter service with the current code
 lint:
-	@docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:v1.24.0-alpine golangci-lint run
+	@golangci-lint run
 
 # Builds and brings up the project
 start:

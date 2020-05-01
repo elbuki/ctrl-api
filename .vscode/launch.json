@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Local api",
+            "type": "go",
+            "request": "launch",
+            "mode": "exec",
+            // Opening the project folder as a workspace in VS Code is needed
+            "program": "${workspaceFolder}/build/src"
+        }
+    ]
+}
