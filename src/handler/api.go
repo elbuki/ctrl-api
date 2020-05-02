@@ -7,7 +7,8 @@ import (
 )
 
 type API struct {
-	Conf config.Config
+	Conf            config.Config
+	SavedPassphrase []byte
 }
 
 func (a *API) Test(message string, reply *string) error {

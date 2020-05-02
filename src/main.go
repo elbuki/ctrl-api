@@ -10,7 +10,10 @@ import (
 
 func main() {
 	port := ":" + conf.APIPort
-	api := &handler.API{Conf: conf}
+	api := &handler.API{
+		Conf:            conf,
+		SavedPassphrase: passphraseHash,
+	}
 
 	if err := rpc.Register(api); err != nil {
 		log.Fatalf("could not register router: %v", err)
@@ -24,8 +27,6 @@ func main() {
 	defer listener.Close()
 
 	log.Printf("CTRL server started at port %s", port)
-
-	log.Println(passphraseHash)
 
 	rpc.Accept(listener)
 }

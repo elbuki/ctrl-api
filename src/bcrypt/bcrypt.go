@@ -10,8 +10,8 @@ type Encryptor struct {
 	hashCost int
 }
 
-func (e Encryptor) Compare(hashed []byte, password string) error {
-	err := bcrypt.CompareHashAndPassword(hashed, []byte(password))
+func (e Encryptor) Compare(hashed, password []byte) error {
+	err := bcrypt.CompareHashAndPassword(hashed, password)
 	if err != nil {
 		return fmt.Errorf("could not compare hash with password: %v", err)
 	}
