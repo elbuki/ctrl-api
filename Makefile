@@ -6,6 +6,10 @@ prepare:
 lint:
 	@golangci-lint run
 
+# Performs the execution of unit tests and coverage analysis
+tests:
+	go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out
+
 # Builds and brings up the project
 start:
 	docker-compose build
