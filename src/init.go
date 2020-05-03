@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/elbuki/ctrl-api/src/bcrypt"
 	"github.com/elbuki/ctrl-api/src/config"
 )
 
@@ -22,7 +23,7 @@ func init() {
 		return
 	}
 
-	conf.SetEncryptor()
+	conf.Encryptor = bcrypt.NewEncryptor(conf.HashCost)
 
 	pHash, err := conf.GetPassphrase()
 	if err != nil {
