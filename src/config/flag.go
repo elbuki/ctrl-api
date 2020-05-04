@@ -1,6 +1,10 @@
 package config
 
-import "flag"
+import (
+	"flag"
+	"fmt"
+	"os"
+)
 
 const (
 	defaultAPIPort    = "9516"
@@ -8,7 +12,13 @@ const (
 	setParaphraseFlag = "P"
 )
 
-func (c *Config) SetFlags() {
+func (c *Config) SetFlags(f *flag.FlagSet, args ...string) error {
+	var err error
+
+	if f == nil {
+		f.Init("args", flag.ContinueOnError)
+	}
+
 	flag.StringVar(
 		&c.APIPort,
 		"port",
@@ -30,5 +40,15 @@ func (c *Config) SetFlags() {
 		"use a passphrase for client connections",
 	)
 
-	flag.Parse()
+	if len(args) > 0 {
+		err = f.Parse(args)
+	} else {
+		err = f.Parse(os.Args[1:])
+	}
+
+	if err != nil {
+		return fmt.Errorf("could not parse the flags: %v", err)
+	}
+
+	return nil
 }

@@ -10,8 +10,12 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func (c *Config) GetPassphrase() ([]byte, error) {
-	pass, err := askPassphrase()
+func (c *Config) GetPassphrase(reader *int) ([]byte, error) {
+	if reader == nil {
+		*reader = syscall.Stdin
+	}
+
+	pass, err := askPassphrase(*reader)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -24,11 +28,11 @@ func (c *Config) GetPassphrase() ([]byte, error) {
 	return passphraseHash, nil
 }
 
-func askPassphrase() (pass []byte, err error) {
+func askPassphrase(reader int) (pass []byte, err error) {
 	fmt.Printf("Enter a passphrase: ")
 
 	// Using terminal library for cross os compatibility
-	pass, err = terminal.ReadPassword(int(syscall.Stdin))
+	pass, err = terminal.ReadPassword(reader)
 	if err != nil {
 		return pass, fmt.Errorf("could not receive the passphrase: %v\n", err)
 	}
@@ -44,7 +48,7 @@ func generatePassphrase(
 ) ([]byte, error) {
 
 	if len(pass) == 0 {
-		fmt.Println("Using default passphrase")
+		fmt.Println("Continue without passphrase")
 		return nil, nil
 	}
 

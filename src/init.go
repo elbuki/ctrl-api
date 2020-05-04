@@ -13,7 +13,9 @@ var (
 )
 
 func init() {
-	conf.SetFlags()
+	if err := conf.SetFlags(nil); err != nil {
+		log.Fatalf("could not set command flags: %v", err)
+	}
 
 	if err := conf.SetController(); err != nil {
 		log.Fatalf("could not set keys controller: %v", err)
