@@ -12,7 +12,7 @@ import (
 
 func (c *Config) GetPassphrase(reader *int) ([]byte, error) {
 	if reader == nil {
-		*reader = syscall.Stdin
+		reader = &syscall.Stdin
 	}
 
 	pass, err := askPassphrase(*reader)

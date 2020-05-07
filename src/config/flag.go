@@ -16,24 +16,24 @@ func (c *Config) SetFlags(f *flag.FlagSet, args ...string) error {
 	var err error
 
 	if f == nil {
-		f.Init("args", flag.ContinueOnError)
+		f = flag.NewFlagSet("args", flag.ContinueOnError)
 	}
 
-	flag.StringVar(
+	f.StringVar(
 		&c.APIPort,
 		"port",
 		defaultAPIPort,
 		"rpc serving port",
 	)
 
-	flag.IntVar(
+	f.IntVar(
 		&c.HashCost,
 		"cost",
 		defaultHashCost,
 		"hash salt cost for the passphrase",
 	)
 
-	flag.BoolVar(
+	f.BoolVar(
 		&c.UsePassphrase,
 		setParaphraseFlag,
 		false,
