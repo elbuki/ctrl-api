@@ -28,7 +28,7 @@ func TestEncryption(t *testing.T) {
 			t.Errorf("#%d: expecting an error but generate went fine", i)
 		}
 
-		if err := s.encrytor.Compare(b, []byte("test")); err == nil {
+		if err = s.encrytor.Compare(b, []byte("test")); err == nil {
 			t.Errorf("#%d: expecting an error on compare but it went ok", i)
 		}
 

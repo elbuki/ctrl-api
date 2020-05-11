@@ -2,6 +2,10 @@
 prepare:
 	git config core.hooksPath hooks/
 
+	# Install linters
+	go get github.com/walle/lll/...
+	go get github.com/client9/misspell/cmd/misspell
+
 # Run the linter service with the current code
 lint:
 	@golangci-lint run

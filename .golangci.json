@@ -1,0 +1,50 @@
+{
+    "linters-settings": {
+      "funlen": {
+        "lines": 80,
+        "statements": 50
+      },
+      "gocritic": {
+        "enabled-tags": [
+          "diagnostic",
+          "experimental",
+          "opinionated",
+          "performance",
+          "style"
+        ]
+      },
+      "goimports": {
+        "local-prefixes": "github.com/golangci/golangci-lint"
+      },
+      "golint": {
+        "min-confidence": 0
+      },
+      "govet": {
+        "check-shadowing": true,
+        "settings": {
+          "printf": {
+            "funcs": [
+              "(github.com/golangci/golangci-lint/pkg/logutils.Log).Infof",
+              "(github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf",
+              "(github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf",
+              "(github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf"
+            ]
+          }
+        }
+      },
+      "lll": {
+        "line-length": 80
+      },
+      "misspell": {
+        "locale": "US"
+      }
+    },
+    "linters": {
+        "enable": [
+            "funlen",
+            "gocritic",
+            "lll",
+            "misspell"
+        ]
+    }
+  }
