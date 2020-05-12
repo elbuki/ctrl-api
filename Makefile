@@ -1,10 +1,8 @@
 # Prepares the local repository to have a hooks executing
 prepare:
 	git config core.hooksPath hooks/
-
-	# Install linters
-	go get github.com/walle/lll/...
-	go get github.com/client9/misspell/cmd/misspell
+	# Install linter
+	GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0
 
 # Run the linter service with the current code
 lint:

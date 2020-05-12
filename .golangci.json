@@ -4,15 +4,6 @@
         "lines": 80,
         "statements": 50
       },
-      "gocritic": {
-        "enabled-tags": [
-          "diagnostic",
-          "experimental",
-          "opinionated",
-          "performance",
-          "style"
-        ]
-      },
       "goimports": {
         "local-prefixes": "github.com/golangci/golangci-lint"
       },
@@ -31,20 +22,9 @@
             ]
           }
         }
-      },
-      "lll": {
-        "line-length": 80
-      },
-      "misspell": {
-        "locale": "US"
       }
     },
     "linters": {
-        "enable": [
-            "funlen",
-            "gocritic",
-            "lll",
-            "misspell"
-        ]
+        "enable": ["funlen"]
     }
   }
