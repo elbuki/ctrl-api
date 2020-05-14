@@ -2,44 +2,26 @@ package config
 
 import (
 	"fmt"
-	"log"
-	"syscall"
 
 	"github.com/elbuki/ctrl-api/src/bcrypt"
-
-	"golang.org/x/crypto/ssh/terminal"
 )
 
-func (c *Config) GetPassphrase(reader *int) ([]byte, error) {
-	if reader == nil {
-		reader = &syscall.Stdin
+func (c *Config) GetPassphrase(pr PasswordReader) ([]byte, error) {
+	if pr == nil {
+		pr = &StdinPasswordReader{}
 	}
 
-	pass, err := askPassphrase(*reader)
+	pass, err := pr.ReadPassword()
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("could not read password: %v", err)
 	}
 
 	passphraseHash, err := generatePassphrase(c.Encryptor, pass)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("could not generate pass: %v", err)
 	}
 
 	return passphraseHash, nil
-}
-
-func askPassphrase(reader int) (pass []byte, err error) {
-	fmt.Printf("Enter a passphrase: ")
-
-	// Using terminal library for cross os compatibility
-	pass, err = terminal.ReadPassword(reader)
-	if err != nil {
-		return pass, fmt.Errorf("could not receive the passphrase: %v\n", err)
-	}
-
-	fmt.Print("\n")
-
-	return
 }
 
 func generatePassphrase(
