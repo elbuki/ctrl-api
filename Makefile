@@ -18,5 +18,4 @@ coverage:
 
 # Builds and brings up the project
 start:
-	docker-compose build
-	docker-compose up
+	./build/src
