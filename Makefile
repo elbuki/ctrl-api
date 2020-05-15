@@ -8,8 +8,12 @@ prepare:
 lint:
 	@golangci-lint run
 
+# Run the tests to ensure everything's alright
+test:
+	@go test ./...
+
 # Performs the execution of unit tests and coverage analysis
-tests:
+coverage:
 	go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out
 
 # Builds and brings up the project

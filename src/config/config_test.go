@@ -86,4 +86,18 @@ func TestPassphrase(t *testing.T) {
 	if _, err := conf.GetPassphrase(&mockPasswordReaderError{}); err == nil {
 		t.Error("expected error but got none when getting passphrase")
 	}
+
+	conf.Encryptor = bcrypt.NewEncryptor(50)
+
+	if _, err := conf.GetPassphrase(&mockPasswordReader{}); err == nil {
+		t.Error("expected error from changing the salt level got nothing")
+	}
+}
+
+func TestOriginalPasswordReader(t *testing.T) {
+	var reader config.StdinPasswordReader
+
+	if _, err := reader.ReadPassword(); err == nil {
+		t.Error("expected error but it went fine")
+	}
 }

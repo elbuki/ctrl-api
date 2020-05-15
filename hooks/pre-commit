@@ -12,9 +12,11 @@ fi
 # Run linter, store output
 lint_output=$(make lint)
 
-# Include test command here
+# Run tests
+make test
+test_exit_code=$?
 
-if [ -z "${lint_output}" ]; then
+if [ -z "${lint_output}" ] && [ $test_exit_code = 0 ]; then
     echo "\033[32mEverything's fine, go ahead!\033[0m"
 else
     echo "\033[31mHey, hold on! Check the errors first!\033[0m"
