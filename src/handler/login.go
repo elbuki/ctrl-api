@@ -1,41 +1,51 @@
 package handler
 
 import (
+	"context"
 	"crypto/sha256"
 	"fmt"
 	"time"
+
+	"github.com/elbuki/ctrl-api/src/pb"
 )
 
-type LoginRequest struct {
-	UUID       string
-	Passphrase []byte
+type LoginHandler struct {
+	api *API
 }
 
-type LoginResponse struct {
-	Token []byte
+func NewLoginHandler(a *API) *LoginHandler {
+	return &LoginHandler{a}
 }
 
-func (a *API) Pair(req *LoginRequest, res *LoginResponse) error {
+func (h *LoginHandler) Login(
+	ctx context.Context,
+	req *pb.LoginRequest,
+) (*pb.LoginResponse, error) {
+
 	var err error
 
-	if req.UUID == "" {
-		return fmt.Errorf("could not receive the uuid from device")
+	if req.GetUuid() == "" {
+		return nil, fmt.Errorf("could not receive the uuid from device")
 	}
 
-	if a.Conf.UsePassphrase {
-		err = a.Conf.Encryptor.Compare(a.SavedPassphrase, req.Passphrase)
+	if h.api.conf.UsePassphrase {
+		err = h.api.conf.Encryptor.Compare(
+			h.api.savedPassphrase,
+			req.GetPassphrase(),
+		)
 	}
 
 	if err != nil {
-		return fmt.Errorf("could not see the match for passphrases: %v", err)
+		return nil, fmt.Errorf("could not match passphrases: %v", err)
 	}
 
-	res.Token, err = generateToken(req.UUID)
+	token, err := generateToken(req.GetUuid())
 	if err != nil {
-		return fmt.Errorf("could not generate token: %v", err)
+		return nil, fmt.Errorf("could not generate token: %v", err)
 	}
 
-	return nil
+	return &pb.LoginResponse{Token: token}, nil
+
 }
 
 func generateToken(uuid string) ([]byte, error) {

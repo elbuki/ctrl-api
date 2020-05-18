@@ -4,28 +4,26 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"net/rpc"
 	"os"
 	"os/exec"
 	"os/signal"
 
 	"github.com/elbuki/ctrl-api/src/handler"
+	"github.com/elbuki/ctrl-api/src/pb"
+	"google.golang.org/grpc"
 )
 
 func main() {
 	port := ":" + conf.APIPort
-	api := &handler.API{
-		Conf:            conf,
-		SavedPassphrase: passphraseHash,
-	}
+	api := handler.NewAPI(conf, passphraseHash)
+	login := handler.NewLoginHandler(api)
 
-	if err := rpc.Register(api); err != nil {
-		log.Fatalf("could not register router: %v", err)
-	}
+	srv := grpc.NewServer()
+	pb.RegisterMainServiceServer(srv, login)
 
-	listener, err := net.Listen("tcp", port)
+	l, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("could not initialize server: %v", err)
+		log.Fatalf("could not initialize listener: %v\n", err)
 	}
 
 	shutdown := make(chan os.Signal, 1)
@@ -34,7 +32,9 @@ func main() {
 	go func() {
 		log.Printf("CTRL server started at port %s", port)
 
-		rpc.Accept(listener)
+		if err := srv.Serve(l); err != nil {
+			log.Fatalf("could not start the server: %v\n", err)
+		}
 	}()
 
 	<-shutdown
@@ -46,7 +46,5 @@ func main() {
 		log.Fatalf("could not change permission from uinput: %v", err)
 	}
 
-	if err := listener.Close(); err != nil {
-		log.Fatalf("could not close listener: %v", err)
-	}
+	srv.GracefulStop()
 }

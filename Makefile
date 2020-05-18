@@ -12,6 +12,10 @@ prepare:
 	# Install linter
 	GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0
 
+proto:
+	rm src/pb/*.pb.go
+	protoc -I=src/pb --go_out=plugins=grpc:src/pb/ src/pb/*
+
 # Builds and brings up the project
 start:
 	./build/src

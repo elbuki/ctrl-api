@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+message LoginRequest {
+    string uuid = 1;
+    bytes passphrase = 2;
+}
+
+message LoginResponse {
+    bytes token = 1;
+}
+
+service MainService {
+    rpc Login (LoginRequest) returns (LoginResponse);
+}

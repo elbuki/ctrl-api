@@ -1,46 +1,45 @@
 package handler_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/elbuki/ctrl-api/src/config"
 	"github.com/elbuki/ctrl-api/src/handler"
+	"github.com/elbuki/ctrl-api/src/pb"
 )
 
 type scenario struct {
 	conf        config.Config
-	req         *handler.LoginRequest
-	res         *handler.LoginResponse
+	req         *pb.LoginRequest
+	res         *pb.LoginResponse
 	shouldThrow bool
 }
 
 var table = []scenario{
 	scenario{
-		req: &handler.LoginRequest{UUID: "1234"},
-		res: &handler.LoginResponse{},
+		req: &pb.LoginRequest{Uuid: "1234"},
+		res: &pb.LoginResponse{},
 	},
 	scenario{
 		conf: config.Config{
 			UsePassphrase: true,
 		},
-		req:         &handler.LoginRequest{UUID: "1234", Passphrase: []byte{}},
-		res:         &handler.LoginResponse{Token: []byte{}},
+		req:         &pb.LoginRequest{Uuid: "1234", Passphrase: []byte{}},
+		res:         &pb.LoginResponse{Token: []byte{}},
 		shouldThrow: true,
 	},
 	scenario{
-		req:         &handler.LoginRequest{Passphrase: []byte{}},
-		res:         &handler.LoginResponse{Token: []byte{}},
+		req:         &pb.LoginRequest{Passphrase: []byte{}},
+		res:         &pb.LoginResponse{Token: []byte{}},
 		shouldThrow: true,
 	},
 }
 
 func TestLoginEndpoint(t *testing.T) {
-	api := new(handler.API)
-
 	for _, s := range table {
-		api.Conf = s.conf
-
-		err := api.Pair(s.req, s.res)
+		h := handler.NewLoginHandler(handler.NewAPI(s.conf, nil))
+		_, err := h.Login(context.Background(), s.req)
 		if !s.shouldThrow && err != nil {
 			t.Errorf("could not execute pair handler: %v", err)
 		}
