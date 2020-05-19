@@ -18,6 +18,7 @@ proto:
 
 # Builds and brings up the project
 start:
+	go build -o build/ ./src/...
 	./build/src
 
 # Run the tests to ensure everything's alright

@@ -39,7 +39,7 @@ func main() {
 
 	<-shutdown
 
-	fmt.Println("sudo permissions are needed to interact with the keyboard")
+	fmt.Println("setting sudo permissions back to normal")
 
 	cmd := exec.Command("/bin/sh", "-c", "sudo chmod 600 /dev/uinput")
 	if err := cmd.Run(); err != nil {

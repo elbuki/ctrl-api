@@ -22,6 +22,7 @@ func (h *LoginHandler) Login(
 	req *pb.LoginRequest,
 ) (*pb.LoginResponse, error) {
 
+	var token []byte
 	var err error
 
 	if req.GetUuid() == "" {
@@ -39,7 +40,10 @@ func (h *LoginHandler) Login(
 		return nil, fmt.Errorf("could not match passphrases: %v", err)
 	}
 
-	token, err := generateToken(req.GetUuid())
+	if h.api.conf.UsePassphrase {
+		token, err = generateToken(req.GetUuid())
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("could not generate token: %v", err)
 	}
