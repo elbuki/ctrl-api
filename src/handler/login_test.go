@@ -6,7 +6,7 @@ import (
 
 	"github.com/elbuki/ctrl-api/src/config"
 	"github.com/elbuki/ctrl-api/src/handler"
-	"github.com/elbuki/ctrl-api/src/pb"
+	pb "github.com/elbuki/ctrl-protobuf/src/golang"
 )
 
 type scenario struct {

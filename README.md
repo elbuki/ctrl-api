@@ -1,6 +1,6 @@
 # ctrl API
 
-This is the RPC API that is responsible of handling the actions coming from the client by ensuring secure communication.
+This is the gRPC API that is responsible of handling the actions coming from the client by ensuring secure communication.
 
 ## Getting Started
 

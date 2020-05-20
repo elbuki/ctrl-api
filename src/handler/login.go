@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/elbuki/ctrl-api/src/pb"
+	pb "github.com/elbuki/ctrl-protobuf/src/golang"
 )
 
 type LoginHandler struct {

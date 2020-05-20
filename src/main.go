@@ -9,7 +9,7 @@ import (
 	"os/signal"
 
 	"github.com/elbuki/ctrl-api/src/handler"
-	"github.com/elbuki/ctrl-api/src/pb"
+	pb "github.com/elbuki/ctrl-protobuf/src/golang"
 	"google.golang.org/grpc"
 )
 
