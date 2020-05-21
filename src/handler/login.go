@@ -9,15 +9,7 @@ import (
 	pb "github.com/elbuki/ctrl-protobuf/src/golang"
 )
 
-type LoginHandler struct {
-	api *API
-}
-
-func NewLoginHandler(a *API) *LoginHandler {
-	return &LoginHandler{a}
-}
-
-func (h *LoginHandler) Login(
+func (h *Handler) Login(
 	ctx context.Context,
 	req *pb.LoginRequest,
 ) (*pb.LoginResponse, error) {

@@ -9,19 +9,19 @@ import (
 	pb "github.com/elbuki/ctrl-protobuf/src/golang"
 )
 
-type scenario struct {
+type loginScenario struct {
 	conf        config.Config
 	req         *pb.LoginRequest
 	res         *pb.LoginResponse
 	shouldThrow bool
 }
 
-var table = []scenario{
-	scenario{
+var loginTable = []loginScenario{
+	loginScenario{
 		req: &pb.LoginRequest{Uuid: "1234"},
 		res: &pb.LoginResponse{},
 	},
-	scenario{
+	loginScenario{
 		conf: config.Config{
 			UsePassphrase: true,
 		},
@@ -29,7 +29,7 @@ var table = []scenario{
 		res:         &pb.LoginResponse{Token: []byte{}},
 		shouldThrow: true,
 	},
-	scenario{
+	loginScenario{
 		req:         &pb.LoginRequest{Passphrase: []byte{}},
 		res:         &pb.LoginResponse{Token: []byte{}},
 		shouldThrow: true,
@@ -37,8 +37,8 @@ var table = []scenario{
 }
 
 func TestLoginEndpoint(t *testing.T) {
-	for _, s := range table {
-		h := handler.NewLoginHandler(handler.NewAPI(s.conf, nil))
+	for _, s := range loginTable {
+		h := handler.NewHandler(handler.NewAPI(s.conf, nil))
 		_, err := h.Login(context.Background(), s.req)
 		if !s.shouldThrow && err != nil {
 			t.Errorf("could not execute pair handler: %v", err)
