@@ -15,7 +15,7 @@ import (
 
 func main() {
 	port := ":" + conf.APIPort
-	srv := grpc.NewServer()
+	srv := grpc.NewServer(handler.WithAuthorization())
 	h := handler.NewHandler(conf)
 
 	h.SetPassphrase(passphraseHash)
