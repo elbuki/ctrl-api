@@ -38,7 +38,7 @@ var loginTable = []loginScenario{
 
 func TestLoginEndpoint(t *testing.T) {
 	for _, s := range loginTable {
-		h := handler.NewHandler(handler.NewAPI(s.conf, nil))
+		h := handler.NewHandler(s.conf)
 		_, err := h.Login(context.Background(), s.req)
 		if !s.shouldThrow && err != nil {
 			t.Errorf("could not execute pair handler: %v", err)

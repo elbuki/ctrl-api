@@ -1,9 +1,23 @@
 package handler
 
-type Handler struct {
-	api *API
+import "github.com/elbuki/ctrl-api/src/config"
+
+type api struct {
+	token           []byte
+	conf            config.Config
+	savedPassphrase []byte
 }
 
-func NewHandler(a *API) *Handler {
-	return &Handler{a}
+type Handler struct {
+	*api
+}
+
+func (h *Handler) SetPassphrase(passphrase []byte) {
+	h.api.savedPassphrase = passphrase
+}
+
+func NewHandler(c config.Config) *Handler {
+	return &Handler{
+		api: &api{conf: c},
+	}
 }
