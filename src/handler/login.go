@@ -36,6 +36,8 @@ func (h *Handler) Login(
 		return nil, fmt.Errorf("could not generate token: %v", err)
 	}
 
+	h.api.token = token
+
 	return &pb.LoginResponse{Token: token}, nil
 
 }

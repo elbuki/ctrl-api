@@ -5,6 +5,7 @@ import (
 )
 
 type API struct {
+	token           []byte
 	conf            config.Config
 	savedPassphrase []byte
 }
