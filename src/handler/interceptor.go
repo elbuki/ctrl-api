@@ -1,34 +1,54 @@
 package handler
 
 import (
+	"bytes"
 	"context"
-	"log"
+	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
-func WithAuthorization() grpc.ServerOption {
-	return grpc.UnaryInterceptor(auth)
+func WithInterceptor(h *Handler) grpc.ServerOption {
+	return grpc.UnaryInterceptor(AuthorizationInterceptor(h))
 }
 
-func auth(
-	ctx context.Context,
-	req interface{},
-	info *grpc.UnaryServerInfo,
-	handler grpc.UnaryHandler,
-) (interface{}, error) {
+func AuthorizationInterceptor(h *Handler) grpc.UnaryServerInterceptor {
+	return func(
+		ctx context.Context,
+		req interface{},
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (interface{}, error) {
 
-	ignoredMethods := []string{"/pb.MainService/Login"}
-	for _, m := range ignoredMethods {
-		if m == info.FullMethod {
-			return handler(ctx, req)
+		ignoredMethods := []string{"/pb.MainService/Login"}
+		for _, m := range ignoredMethods {
+			if m == info.FullMethod {
+				return handler(ctx, req)
+			}
 		}
+
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return nil, fmt.Errorf("could not parse metadata")
+		}
+
+		authMD := md.Get("Authorization")
+		if len(authMD) == 0 {
+			return nil, fmt.Errorf("could not get auth token")
+		}
+
+		savedToken := []byte(authMD[0])
+
+		if len(h.api.token) == 0 {
+			return nil, fmt.Errorf("could not get saved token, not logged in")
+		}
+
+		if !bytes.Equal(h.api.token, savedToken) {
+			return nil, fmt.Errorf("could not verify token")
+		}
+
+		return handler(ctx, req)
+
 	}
-
-	// TODO: Validate token from the metadata
-
-	log.Printf("%#v", info)
-
-	return handler(ctx, req)
-
 }

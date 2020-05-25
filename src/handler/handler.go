@@ -9,7 +9,7 @@ type api struct {
 }
 
 type Handler struct {
-	*api
+	api *api
 }
 
 func (h *Handler) SetPassphrase(passphrase []byte) {
