@@ -38,13 +38,13 @@ func AuthorizationInterceptor(h *Handler) grpc.UnaryServerInterceptor {
 			return nil, fmt.Errorf("could not get auth token")
 		}
 
-		savedToken := []byte(authMD[0])
+		passedToken := []byte(authMD[0])
 
 		if len(h.api.token) == 0 {
-			return nil, fmt.Errorf("could not get saved token, not logged in")
+			return nil, fmt.Errorf("could not get passed token, not logged in")
 		}
 
-		if !bytes.Equal(h.api.token, savedToken) {
+		if !bytes.Equal(h.api.token, passedToken) {
 			return nil, fmt.Errorf("could not verify token")
 		}
 

@@ -14,79 +14,74 @@ import (
 )
 
 type authInterceptorScenario struct {
-	ctx         context.Context
-	info        *grpc.UnaryServerInfo
-	h           *handler.Handler
-	shouldThrow bool
+	ctx    context.Context
+	info   *grpc.UnaryServerInfo
+	h      *handler.Handler
+	throws bool
 }
 
 func TestAuthorizationInterceptor(t *testing.T) {
-	// Invalid context
-	// Invalid metadata
-	// Empty saved token
-
-	// Different token
-	// Login endpoint
-	// Happy path
+	ctx := context.Background()
 	conf := config.Config{}
 	info := &grpc.UnaryServerInfo{
 		FullMethod: "TestService.AuthorizationInterceptor",
 	}
+	loginInfo := &grpc.UnaryServerInfo{FullMethod: "/pb.MainService/Login"}
 	invalidMetadata := metadata.NewIncomingContext(
-		context.Background(),
-		metadata.Pairs("foo", "bar"),
+		ctx, metadata.Pairs("foo", "bar"),
 	)
 	validMetadata := metadata.NewIncomingContext(
-		context.Background(),
-		metadata.Pairs("Authorization", "test_passphrase"),
+		ctx, metadata.Pairs("Authorization", "test_passphrase"),
 	)
+	tH := handler.NewHandler(conf)
+	differentToken := handler.NewHandler(conf)
+	happyPathToken := handler.NewHandler(conf)
 	unaryHandler := func(
 		ctx context.Context,
 		req interface{},
 	) (interface{}, error) {
-
-		t.Log("handler executed")
 		return nil, nil
-
 	}
+
+	_, err := differentToken.Login(
+		ctx, &pb.LoginRequest{Uuid: "foo", Passphrase: []byte("bar")},
+	)
+
+	if err != nil {
+		t.Errorf("could not login for getting a different token: %v", err)
+	}
+
+	res, err := happyPathToken.Login(
+		ctx,
+		&pb.LoginRequest{Uuid: "test", Passphrase: []byte("test_passphrase")},
+	)
+
+	if err != nil {
+		t.Errorf("could not login for happy path: %v", err)
+	}
+
+	happyPathMetadata := metadata.NewIncomingContext(
+		ctx, metadata.Pairs("Authorization", string(res.GetToken())),
+	)
 
 	var table = []authInterceptorScenario{
-		authInterceptorScenario{
-			ctx:         context.Background(),
-			info:        info,
-			h:           handler.NewHandler(conf),
-			shouldThrow: true,
-		},
-		authInterceptorScenario{
-			ctx:         invalidMetadata,
-			info:        info,
-			h:           handler.NewHandler(conf),
-			shouldThrow: true,
-		},
-		authInterceptorScenario{
-			ctx:         validMetadata,
-			info:        info,
-			h:           handler.NewHandler(conf),
-			shouldThrow: true,
-		},
-		// authInterceptorScenario{
-		// 	ctx:         validMetadata,
-		// 	info:        info,
-		// 	h:           handler.NewHandler(),
-		// 	shouldThrow: true,
-		// },
+		authInterceptorScenario{ctx: ctx, info: info, h: tH, throws: true},
+		authInterceptorScenario{ctx: invalidMetadata, info: info, h: tH, throws: true},
+		authInterceptorScenario{ctx: validMetadata, info: info, h: tH, throws: true},
+		authInterceptorScenario{ctx: validMetadata, info: info, h: differentToken, throws: true},
+		authInterceptorScenario{ctx: validMetadata, info: loginInfo, h: happyPathToken},
+		authInterceptorScenario{ctx: happyPathMetadata, info: info, h: happyPathToken},
 	}
 
-	for _, s := range table {
-		i := handler.AuthorizationInterceptor(s.h)
-		_, err := i(s.ctx, &pb.KeyPressRequest{}, s.info, unaryHandler)
-		if !s.shouldThrow && err != nil {
-			t.Errorf("could not execute auth interceptor: %v", err)
+	for i, s := range table {
+		ai := handler.AuthorizationInterceptor(s.h)
+		_, err := ai(s.ctx, &pb.KeyPressRequest{}, s.info, unaryHandler)
+		if !s.throws && err != nil {
+			t.Errorf("%d: could not execute auth interceptor: %v", i, err)
 		}
 
-		if s.shouldThrow && err == nil {
-			t.Error("expected error but it went fine")
+		if s.throws && err == nil {
+			t.Errorf("%d: expected error but it went fine", i)
 		}
 	}
-
 }
