@@ -7,6 +7,8 @@ import (
 	"time"
 
 	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (h *Handler) Login(
@@ -17,7 +19,11 @@ func (h *Handler) Login(
 	var err error
 
 	if req.GetUuid() == "" {
-		return nil, fmt.Errorf("could not receive the uuid from device")
+		gErr := status.Error(
+			codes.InvalidArgument,
+			"could not receive the uuid from device",
+		)
+		return nil, gErr
 	}
 
 	if h.api.conf.UsePassphrase {
@@ -28,12 +34,20 @@ func (h *Handler) Login(
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("could not match passphrases: %v", err)
+		gErr := status.Error(
+			codes.FailedPrecondition,
+			fmt.Sprintf("could not match passphrases: %v", err),
+		)
+		return nil, gErr
 	}
 
 	token, err := generateToken(req.GetUuid())
 	if err != nil {
-		return nil, fmt.Errorf("could not generate token: %v", err)
+		gErr := status.Error(
+			codes.Unknown,
+			fmt.Sprintf("could not generate token: %v", err),
+		)
+		return nil, gErr
 	}
 
 	h.api.token = token

@@ -32,7 +32,7 @@ func TestKeyPressEndpoint(t *testing.T) {
 	}
 
 	for _, s := range keyPressTable {
-		h := handler.NewHandler(conf)
+		h := handler.NewHandler(conf, nil)
 		_, err := h.KeyPress(context.Background(), s.req)
 		if !s.shouldThrow && err != nil {
 			t.Errorf("could not execute key press handler: %v", err)

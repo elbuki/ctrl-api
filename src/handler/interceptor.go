@@ -3,10 +3,11 @@ package handler
 import (
 	"bytes"
 	"context"
-	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 func WithInterceptor(h *Handler) grpc.ServerOption {
@@ -30,22 +31,38 @@ func AuthorizationInterceptor(h *Handler) grpc.UnaryServerInterceptor {
 
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return nil, fmt.Errorf("could not parse metadata")
+			err := status.Error(
+				codes.FailedPrecondition,
+				"could not parse metadata",
+			)
+			return nil, err
 		}
 
 		authMD := md.Get("Authorization")
 		if len(authMD) == 0 {
-			return nil, fmt.Errorf("could not get auth token")
+			err := status.Error(
+				codes.FailedPrecondition,
+				"could not get auth token",
+			)
+			return nil, err
 		}
 
 		passedToken := []byte(authMD[0])
 
 		if len(h.api.token) == 0 {
-			return nil, fmt.Errorf("could not get passed token, not logged in")
+			err := status.Error(
+				codes.FailedPrecondition,
+				"could not get passed token, not logged in",
+			)
+			return nil, err
 		}
 
 		if !bytes.Equal(h.api.token, passedToken) {
-			return nil, fmt.Errorf("could not verify token")
+			err := status.Error(
+				codes.FailedPrecondition,
+				"could not verify token",
+			)
+			return nil, err
 		}
 
 		return handler(ctx, req)

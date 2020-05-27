@@ -16,8 +16,8 @@ func (h *Handler) SetPassphrase(passphrase []byte) {
 	h.api.savedPassphrase = passphrase
 }
 
-func NewHandler(c config.Config) *Handler {
+func NewHandler(c config.Config, passphrase []byte) *Handler {
 	return &Handler{
-		api: &api{conf: c},
+		api: &api{conf: c, savedPassphrase: passphrase},
 	}
 }

@@ -33,9 +33,9 @@ func TestAuthorizationInterceptor(t *testing.T) {
 	validMetadata := metadata.NewIncomingContext(
 		ctx, metadata.Pairs("Authorization", "test_passphrase"),
 	)
-	tH := handler.NewHandler(conf)
-	differentToken := handler.NewHandler(conf)
-	happyPathToken := handler.NewHandler(conf)
+	tH := handler.NewHandler(conf, nil)
+	differentToken := handler.NewHandler(conf, nil)
+	happyPathToken := handler.NewHandler(conf, nil)
 	unaryHandler := func(
 		ctx context.Context,
 		req interface{},

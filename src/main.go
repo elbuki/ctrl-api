@@ -15,10 +15,9 @@ import (
 
 func main() {
 	port := ":" + conf.APIPort
-	h := handler.NewHandler(conf)
+	h := handler.NewHandler(conf, passphraseHash)
 	srv := grpc.NewServer(handler.WithInterceptor(h))
 
-	h.SetPassphrase(passphraseHash)
 	pb.RegisterMainServiceServer(srv, h)
 
 	l, err := net.Listen("tcp", port)

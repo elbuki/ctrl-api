@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/elbuki/ctrl-api/src/control"
 
 	pb "github.com/elbuki/ctrl-protobuf/src/golang"
@@ -17,11 +20,19 @@ func (h *Handler) KeyPress(
 
 	key, err := control.TranslateProtoKey(req.GetKey())
 	if err != nil {
-		return nil, fmt.Errorf("could not translate key: %v", err)
+		gErr := status.Error(
+			codes.FailedPrecondition,
+			fmt.Sprintf("could not translate key: %v", err),
+		)
+		return nil, gErr
 	}
 
 	if err := h.api.conf.Controller.SendKeys(key); err != nil {
-		return nil, fmt.Errorf("could not send key from external: %v", err)
+		gErr := status.Error(
+			codes.Unknown,
+			fmt.Sprintf("could not send key from external: %v", err),
+		)
+		return nil, gErr
 	}
 
 	return nil, nil
