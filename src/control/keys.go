@@ -5,7 +5,7 @@ import (
 
 	"github.com/micmonay/keybd_event"
 
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 )
 
 var keysDict = map[pb.Key]int{

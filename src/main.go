@@ -5,11 +5,10 @@ import (
 	"log"
 	"net"
 	"os"
-	"os/exec"
 	"os/signal"
 
 	"github.com/elbuki/ctrl-api/src/handler"
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 	"google.golang.org/grpc"
 )
 
@@ -40,10 +39,10 @@ func main() {
 
 	fmt.Println("setting sudo permissions back to normal")
 
-	cmd := exec.Command("/bin/sh", "-c", "sudo chmod 600 /dev/uinput")
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("could not change permission from uinput: %v", err)
-	}
+	// cmd := exec.Command("/bin/sh", "-c", "sudo chmod 600 /dev/uinput")
+	// if err := cmd.Run(); err != nil {
+	// 	log.Fatalf("could not change permission from uinput: %v", err)
+	// }
 
 	srv.GracefulStop()
 }

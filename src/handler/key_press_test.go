@@ -7,7 +7,7 @@ import (
 	"github.com/elbuki/ctrl-api/src/config"
 	"github.com/elbuki/ctrl-api/src/control"
 	"github.com/elbuki/ctrl-api/src/handler"
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 )
 
 type keyPressScenario struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"syscall"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 type PasswordReader interface {
@@ -17,9 +17,9 @@ func (StdinPasswordReader) ReadPassword() ([]byte, error) {
 	fmt.Printf("Enter a passphrase: ")
 
 	// Using terminal library for cross os compatibility
-	pass, err := terminal.ReadPassword(syscall.Stdin)
+	pass, err := term.ReadPassword(syscall.Stdin)
 	if err != nil {
-		return pass, fmt.Errorf("could not receive the passphrase: %v\n", err)
+		return pass, fmt.Errorf("could not receive the passphrase: %v", err)
 	}
 
 	fmt.Print("\n")
