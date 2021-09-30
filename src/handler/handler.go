@@ -1,15 +1,20 @@
 package handler
 
-import "github.com/elbuki/ctrl-api/src/config"
+import (
+	"github.com/elbuki/ctrl-api/src/config"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
+)
 
 type api struct {
-	token           []byte
+	token           string
 	conf            config.Config
 	savedPassphrase []byte
 }
 
 type Handler struct {
 	api *api
+
+	pb.UnimplementedMainServiceServer
 }
 
 func (h *Handler) SetPassphrase(passphrase []byte) {

@@ -7,7 +7,7 @@ import (
 	"github.com/elbuki/ctrl-api/src/config"
 
 	"github.com/elbuki/ctrl-api/src/handler"
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 	"google.golang.org/grpc/metadata"
 
 	"google.golang.org/grpc"
@@ -65,12 +65,12 @@ func TestAuthorizationInterceptor(t *testing.T) {
 	)
 
 	var table = []authInterceptorScenario{
-		authInterceptorScenario{ctx: ctx, info: info, h: tH, throws: true},
-		authInterceptorScenario{ctx: invalidMetadata, info: info, h: tH, throws: true},
-		authInterceptorScenario{ctx: validMetadata, info: info, h: tH, throws: true},
-		authInterceptorScenario{ctx: validMetadata, info: info, h: differentToken, throws: true},
-		authInterceptorScenario{ctx: validMetadata, info: loginInfo, h: happyPathToken},
-		authInterceptorScenario{ctx: happyPathMetadata, info: info, h: happyPathToken},
+		{ctx: ctx, info: info, h: tH, throws: true},
+		{ctx: invalidMetadata, info: info, h: tH, throws: true},
+		{ctx: validMetadata, info: info, h: tH, throws: true},
+		{ctx: validMetadata, info: info, h: differentToken, throws: true},
+		{ctx: validMetadata, info: loginInfo, h: happyPathToken},
+		{ctx: happyPathMetadata, info: info, h: happyPathToken},
 	}
 
 	for i, s := range table {

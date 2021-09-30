@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"bytes"
 	"context"
 
 	"google.golang.org/grpc"
@@ -47,9 +46,15 @@ func AuthorizationInterceptor(h *Handler) grpc.UnaryServerInterceptor {
 			return nil, err
 		}
 
-		passedToken := []byte(authMD[0])
+		if len(authMD) == 0 {
+			err := status.Error(
+				codes.FailedPrecondition,
+				"could not find a token in the metadata",
+			)
+			return nil, err
+		}
 
-		if len(h.api.token) == 0 {
+		if h.api.token == "" {
 			err := status.Error(
 				codes.FailedPrecondition,
 				"could not get passed token, not logged in",
@@ -57,7 +62,7 @@ func AuthorizationInterceptor(h *Handler) grpc.UnaryServerInterceptor {
 			return nil, err
 		}
 
-		if !bytes.Equal(h.api.token, passedToken) {
+		if h.api.token != authMD[0] {
 			err := status.Error(
 				codes.FailedPrecondition,
 				"could not verify token",

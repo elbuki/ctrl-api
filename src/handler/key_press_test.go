@@ -7,7 +7,7 @@ import (
 	"github.com/elbuki/ctrl-api/src/config"
 	"github.com/elbuki/ctrl-api/src/control"
 	"github.com/elbuki/ctrl-api/src/handler"
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 )
 
 type keyPressScenario struct {
@@ -16,11 +16,11 @@ type keyPressScenario struct {
 }
 
 var keyPressTable = []keyPressScenario{
-	keyPressScenario{
+	{
 		req:         &pb.KeyPressRequest{Key: 9999},
 		shouldThrow: true,
 	},
-	keyPressScenario{
+	{
 		req:         &pb.KeyPressRequest{Key: 2, Token: []byte("test")},
 		shouldThrow: false,
 	},

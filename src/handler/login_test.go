@@ -6,32 +6,28 @@ import (
 
 	"github.com/elbuki/ctrl-api/src/config"
 	"github.com/elbuki/ctrl-api/src/handler"
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 )
 
 type loginScenario struct {
 	conf        config.Config
 	req         *pb.LoginRequest
-	res         *pb.LoginResponse
 	shouldThrow bool
 }
 
 var loginTable = []loginScenario{
-	loginScenario{
+	{
 		req: &pb.LoginRequest{Uuid: "1234"},
-		res: &pb.LoginResponse{},
 	},
-	loginScenario{
+	{
 		conf: config.Config{
 			UsePassphrase: true,
 		},
 		req:         &pb.LoginRequest{Uuid: "1234", Passphrase: []byte{}},
-		res:         &pb.LoginResponse{Token: []byte{}},
 		shouldThrow: true,
 	},
-	loginScenario{
+	{
 		req:         &pb.LoginRequest{Passphrase: []byte{}},
-		res:         &pb.LoginResponse{Token: []byte{}},
 		shouldThrow: true,
 	},
 }

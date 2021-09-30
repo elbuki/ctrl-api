@@ -3,10 +3,11 @@ package handler
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"time"
 
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -56,14 +57,14 @@ func (h *Handler) Login(
 
 }
 
-func generateToken(uuid string) ([]byte, error) {
+func generateToken(uuid string) (string, error) {
 	h := sha256.New()
 	iso8601Date := time.Now().Format(time.RFC3339)
 	plainToken := uuid + "_" + iso8601Date
 
 	if _, err := h.Write([]byte(plainToken)); err != nil {
-		return nil, fmt.Errorf("could not write to hash: %v", err)
+		return "", fmt.Errorf("could not write to hash: %v", err)
 	}
 
-	return h.Sum(nil), nil
+	return hex.EncodeToString(h.Sum(nil)), nil
 }

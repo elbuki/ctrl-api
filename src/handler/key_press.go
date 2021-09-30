@@ -9,7 +9,7 @@ import (
 
 	"github.com/elbuki/ctrl-api/src/control"
 
-	pb "github.com/elbuki/ctrl-protobuf/src/golang"
+	pb "github.com/elbuki/ctrl-protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
@@ -35,5 +35,5 @@ func (h *Handler) KeyPress(
 		return nil, gErr
 	}
 
-	return nil, nil
+	return new(empty.Empty), nil
 }
