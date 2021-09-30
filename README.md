@@ -10,6 +10,12 @@ These instructions will get you a copy of the project up and running in your loc
 
 TBD
 
+#### macOS support
+
+There's a setting that is specific of macOS that needs to be activated depending on the application that you're going to use to run the compiled binary. In the following screenshot I'm using the native macOS terminal to run the compiled binary and in order to see it working we need to check the Terminal app within the Accessibility settings. [See more](https://github.com/micmonay/keybd_event/issues/20#issuecomment-618265093).
+
+![Accessibility settings window](/img/settings.png)
+
 ### Installing
 
 TBD
