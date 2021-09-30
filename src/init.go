@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"os/exec"
+	"runtime"
 
 	"github.com/elbuki/ctrl-api/src/bcrypt"
 	"github.com/elbuki/ctrl-api/src/config"
@@ -18,12 +20,14 @@ func init() {
 		log.Fatalf("could not set command flags: %v", err)
 	}
 
-	fmt.Println("sudo permissions are needed to interact with the keyboard")
+	if runtime.GOOS == "linux" {
+		fmt.Println("sudo permissions are needed to interact with the keyboard")
 
-	// cmd := exec.Command("/bin/sh", "-c", "sudo chmod +0666 /dev/uinput")
-	// if err := cmd.Run(); err != nil {
-	// 	log.Fatalf("could not change permission from uinput: %v", err)
-	// }
+		cmd := exec.Command("/bin/sh", "-c", "sudo chmod +0666 /dev/uinput")
+		if err := cmd.Run(); err != nil {
+			log.Fatalf("could not change permission from uinput: %v", err)
+		}
+	}
 
 	if err := conf.SetController(); err != nil {
 		log.Fatalf("could not set keys controller: %v", err)

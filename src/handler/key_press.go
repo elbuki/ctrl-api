@@ -35,5 +35,5 @@ func (h *Handler) KeyPress(
 		return nil, gErr
 	}
 
-	return nil, nil
+	return new(empty.Empty), nil
 }

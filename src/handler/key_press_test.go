@@ -16,11 +16,11 @@ type keyPressScenario struct {
 }
 
 var keyPressTable = []keyPressScenario{
-	keyPressScenario{
+	{
 		req:         &pb.KeyPressRequest{Key: 9999},
 		shouldThrow: true,
 	},
-	keyPressScenario{
+	{
 		req:         &pb.KeyPressRequest{Key: 2, Token: []byte("test")},
 		shouldThrow: false,
 	},
